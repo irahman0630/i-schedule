@@ -1,0 +1,74 @@
+/* General styles */
+body {
+  font-family: Arial, sans-serif;
+  line-height: 1.6;
+  color: #333;
+  background-color: #f4f4f4;
+  margin: 0;
+  padding: 0;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-weight: bold;
+}
+
+h1 {
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+}
+
+p {
+  font-size: 1.125rem;
+  margin-bottom: 1rem;
+}
+
+/* Layout styles */
+header {
+  background-color: #333;
+  color: #fff;
+  text-align: center;
+  padding: 1rem;
+}
+
+main {
+  max-width: 960px;
+  margin: 1rem auto;
+  padding: 1rem;
+  background-color: #fff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+footer {
+  background-color: #333;
+  color: #fff;
+  text-align: center;
+  padding: 1rem;
+  margin-top: 1rem;
+}
+
+/* Form styles */
+input[type="text"],
+input[type="date"],
+input[type="time"],
+textarea {
+  display: block;
+  width: 100%;
+  padding: 0.5rem;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  margin-bottom: 1rem;
+}
+
+button[type="submit"] {
+  display: inline-block;
+  background-color: #333;
+  color: #fff;
+  border: none;
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+button[type="submit"]:hover {
+  background-color: #555;
+}
