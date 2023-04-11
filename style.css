@@ -1,0 +1,41 @@
+.jumbotron {
+  background-color: #0080ff;
+  color: #fff;
+  text-align: center;
+}
+
+.btn-primary {
+  background-color: #0080ff;
+  border-color: #0080ff;
+}
+
+.btn-primary:hover {
+  background-color: #0066cc;
+  border-color: #0066cc;
+}
+
+.card {
+  margin-top: 50px;
+  margin-bottom: 50px;
+  box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+}
+
+.card-title {
+  margin-top: 20px;
+  margin-bottom: 10px;
+  font-size: 20px;
+}
+
+.card-text {
+  font-size: 16px;
+}
+
+.footer {
+  margin-top: 50px;
+  text-align: center;
+}
+
+#back-btn {
+  display: block;
+  margin: 0 auto;
+}
