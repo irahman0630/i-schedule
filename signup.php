@@ -38,37 +38,42 @@ include "header.php"
 </body>
 
 <script>
+  var email = document.getElementById("email").value;
+  var password1 = document.getElementById("password");
+  var password2 = document.getElementById("confirm-password");
+  var submitButton = document.getElementById("submit-button");
+
+  submitButton.addEventListener("click", function(event) {
+    event.preventDefault();
+
     var email = document.getElementById("email").value;
-    var password1 = document.getElementById("password");
-    var password2 = document.getElementById("confirm-password");
-    var submitButton = document.getElementById("submit-button");
 
-    submitButton.addEventListener("click", function(event) {
-        event.preventDefault(); // Prevent the default form submission behavior
-
-        var email = document.getElementById("email").value;
-
-        if (password1.value !== password2.value) {
-            const errorMessage = document.getElementById("error-message");
-            errorMessage.innerHTML = "Passwords do not match.";
-            errorMessage.style.display = "block";
-        } else {
-            var xhr = new XMLHttpRequest();
-            xhr.open("POST", "submit_signup.php", true);
-            xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-            xhr.onreadystatechange = function() {
-                if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
-                    alert(this.responseText);
-                }
-            };
-            xhr.send("email=" + encodeURIComponent(email) +
-                    "&password=" + encodeURIComponent(password1.value));
+    if (password1.value !== password2.value) {
+      const errorMessage = document.getElementById("error-message");
+      errorMessage.innerHTML = "Passwords do not match.";
+      errorMessage.style.display = "block";
+    } else {
+      var xhr = new XMLHttpRequest();
+      xhr.open("POST", "submit_signup.php", true);
+      xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+      xhr.onreadystatechange = function() {
+        if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
+          if (this.responseText.indexOf("success") !== -1) {
+            window.location.href = "login.php";
+          } else {
+            alert(this.responseText);
+          }
         }
-    });
+      };
+      xhr.send("email=" + encodeURIComponent(email) +
+        "&password=" + encodeURIComponent(password1.value));
+    }
+  });
 
 
-    document.getElementById("back-btn").addEventListener("click", function() {
-        window.location.href = "index.php";
-    });
+  document.getElementById("back-btn").addEventListener("click", function() {
+    window.location.href = "index.php";
+  });
 </script>
+
 

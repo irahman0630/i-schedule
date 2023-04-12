@@ -14,7 +14,7 @@ $stmt = $conn->prepare($sql);
 $stmt->bind_param("ss", $email, $hashed_password);
 
 if ($stmt->execute() === TRUE) {
-  echo "New record created successfully";
+  echo "success";
 } else {
   echo "Error: " . $stmt->error;
 }

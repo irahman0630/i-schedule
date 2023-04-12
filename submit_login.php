@@ -18,17 +18,14 @@ $result = $stmt->get_result();
 if ($result->num_rows == 1) {
     $row = $result->fetch_assoc();
     if (password_verify($password, $row["password"])) {
-        // Login successful, create session variables and redirect to main page
         $_SESSION["user_id"] = $row["user_id"];
         $_SESSION["email"] = $row["email"];
-        header("Location: login.php");
+        header("Location: main.php");
     } else {
-        // Password incorrect, show error message
-        echo "Invalid email or password (1).";
+        echo "Invalid email or password.";
     }
 } else {
-    // User not found, show error message
-    echo "Invalid email or password (2).";
+    echo "Invalid email or password.";
 }
 
 $stmt->close();
