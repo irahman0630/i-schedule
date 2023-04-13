@@ -20,7 +20,7 @@ if ($result->num_rows == 1) {
     if (password_verify($password, $row["password"])) {
         $_SESSION["user_id"] = $row["user_id"];
         $_SESSION["email"] = $row["email"];
-        header("Location: main.php");
+        header("Location: dashboard.php");
     } else {
         echo "Invalid email or password.";
     }

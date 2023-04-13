@@ -1,5 +1,6 @@
 <?php
 include "header.php";
+session_start();
 ?>
 
 <body>
@@ -11,9 +12,13 @@ include "header.php";
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
-                        <button class="btn btn-primary" id="login-btn">Log In</button>
-                    </li>
+                    <?php
+                    if (isset($_SESSION["user_id"])) {
+                        echo '<li class="nav-item"><a class="btn btn-primary" href="dashboard.php">Dashboard</a></li>';
+                    } else {
+                        echo '<li class="nav-item"><button class="btn btn-primary" id="login-btn">Log In</button></li>';
+                    }
+                    ?>
                 </ul>
             </div>
         </div>
@@ -23,7 +28,10 @@ include "header.php";
         <div class="container">
             <h1 class="display-4">Welcome to i-Schedule</h1>
             <p class="lead">A simple yet powerful scheduler app that helps you manage your tasks and events.</p>
+            <?php
+            if (!isset($_SESSION["user_id"])) { ?>
             <button class="btn btn-primary btn-lg" id="get-started-btn">Get Started</button>
+            <?php } ?>
         </div>
     </div>
 
