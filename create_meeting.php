@@ -8,6 +8,7 @@ if (!isset($_SESSION["user_id"])) {
 
 $user_id = $_SESSION["user_id"];
 $email = $_SESSION["email"];
+$client->setRedirectUri('http://localhost/i-schedule/create_meeting.php');
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
@@ -20,7 +21,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $start = $meeting_date . 'T' . $start_time . ':00-07:00'; 
     $end = $meeting_date . 'T' . $end_time . ':00-07:00'; 
 
-     if (isset($_GET['code'])) {
+    $conference = new Google_Service_Calendar_ConferenceData();
+    $create_request = new Google_Service_Calendar_CreateConferenceRequest();
+    $conference_solution = new Google_Service_Calendar_ConferenceSolutionKey();
+    $conference_solution->setType("hangoutsMeet");
+    $create_request->setConferenceSolutionKey($conference_solution);
+    $create_request->setRequestId($meeting_name);
+    $conference->setCreateRequest($create_request);
+    
+    if (isset($_GET['code'])) {
         $client->authenticate($_GET['code']);
         $access_token = $client->getAccessToken();
         $calendar_service = new Google_Service_Calendar($client);
@@ -28,15 +37,23 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             'summary' => $meeting_name,
             'description' => $meeting_description,
             'start' => array(
-                'dateTime' => $start,
-                'timeZone' => 'America/New_York',
+              'dateTime' => $start,
+              'timeZone' => 'America/New_York',
             ),
             'end' => array(
-                'dateTime' => $end,
-                'timeZone' => 'America/New_York',
+              'dateTime' => $end,
+              'timeZone' => 'America/New_York',
             ),
+            'conferenceData' => $conference,
+            'conferenceDataVersion' => 1
         ));
-        $calendar_service->events->insert($calendar_id, $calendar_event);
+        $calendar_event = $calendar_service->events->insert($calendar_id, $calendar_event, array(
+            'conferenceDataVersion' => 1
+        ));
+
+        $meeting_link = $calendar_event->getHangoutLink();
+        header("Location: meeting_link.php?link=" . urlencode($meeting_link));
+        exit();
     }
     else {
         $authUrl = $client->createAuthUrl();
@@ -46,7 +63,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 }
 
 ?>
-
 
 <body>
     <nav class="navbar navbar-expand-lg navbar-light bg-light">

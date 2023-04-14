@@ -14,11 +14,9 @@ if (isset($_POST["logout"])) {
     session_destroy();
     header("Location: index.php");
 }
-
 ?>
 
 <body>
-
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <div class="container">
             <a class="navbar-brand" href="index.php">i-Schedule</a>
@@ -64,19 +62,10 @@ if (isset($_POST["logout"])) {
                         <div class="card-body">
                         <h5 class="card-title">Invite Participants</h5>
                         <p class="card-text">Invite participants to a scheduled meeting by entering their email addresses.</p>
-                        <form>
-                            <div class="mb-3">
-                            <label for="email-input" class="form-label">Email Address:</label>
-                            <input type="email" class="form-control" id="email-input">
-                            </div>
-                            <button type="submit" class="btn btn-primary">Invite</button>
-                        </form>
+                        <a href="invite.php" class="btn btn-primary">Invite</a>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-
 </body>
-
-                   
