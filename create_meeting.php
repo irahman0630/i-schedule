@@ -21,6 +21,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $start = $meeting_date . 'T' . $start_time . ':00-07:00'; 
     $end = $meeting_date . 'T' . $end_time . ':00-07:00'; 
 
+    $sql = "INSERT INTO meeting (organizer_id, title, description, start_time, end_time, created_at, updated_at)
+    VALUES (?, ?, ?, ?, ?, NOW(), NOW())";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("sssss", $user_id, $meeting_name, $meeting_description, $start, $end);
+    $stmt->execute();
+    $stmt->close();
+
     $conference = new Google_Service_Calendar_ConferenceData();
     $create_request = new Google_Service_Calendar_CreateConferenceRequest();
     $conference_solution = new Google_Service_Calendar_ConferenceSolutionKey();
