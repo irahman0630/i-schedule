@@ -52,7 +52,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         ));
 
         $meeting_link = $calendar_event->getHangoutLink();
-        header("Location: meeting_link.php?link=" . urlencode($meeting_link));
+        header("Location: all_meetings.php");
         exit();
     }
     else {
@@ -61,9 +61,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         exit;
     }
 }
-
 ?>
 
+<?php
+if (isset($_GET['code'])) {
+?>
 <body>
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <div class="container">
@@ -73,7 +75,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             </button>
         </div>
     </nav>
-
     <div class="container">
         <div class="row">
             <div class="col-md-6 offset-md-3">
@@ -116,3 +117,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         </div>
     </div>
 </body>
+<?php }
+else {
+    $authUrl = $client->createAuthUrl();
+        header('Location: ' . filter_var($authUrl, FILTER_SANITIZE_URL));
+        exit;
+}
+?>

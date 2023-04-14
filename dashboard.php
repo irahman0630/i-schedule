@@ -37,17 +37,26 @@ if (isset($_POST["logout"])) {
 
         <div class="container">
             <div class="row">
-                <div class="col-md-4">
+                <div class="col-md-12">
+                    <div class="card">
+                        <div class="card-body">
+                            <i class="fas fa-list fa-3x"></i>
+                            <h5 class="card-title">All Meetings</h5>
+                            <p class="card-text">View and edit all existing meetings.</p>
+                            <a href="all_meetings.php" class="btn btn-primary">View</a>
+                        </div>
+                    </div>
+                <div class="col-md-12">
                     <div class="card">
                         <div class="card-body">
                             <i class="fas fa-calendar-plus fa-3x"></i>
                             <h5 class="card-title">Create Meeting</h5>
-                            <p class="card-text">Create a new meeting with a unique code and invite participants.</p>
+                            <p class="card-text">Create a new meeting with a unique code.</p>
                             <a href="create_meeting.php" class="btn btn-primary">Create</a>
                         </div>
                     </div>
                 </div>
-                <div class="col-md-4">
+                <div class="col-md-12">
                     <div class="card">
                         <div class="card-body">
                             <i class="fas fa-users fa-3x"></i>
@@ -57,12 +66,13 @@ if (isset($_POST["logout"])) {
                         </div>
                     </div>
                 </div>
-                <div class="col-md-4">
+                <div class="col-md-12">
                     <div class="card">
                         <div class="card-body">
-                        <h5 class="card-title">Invite Participants</h5>
-                        <p class="card-text">Invite participants to a scheduled meeting by entering their email addresses.</p>
-                        <a href="invite.php" class="btn btn-primary">Invite</a>
+                            <i class="fas fa-envelope fa-3x"></i>
+                            <h5 class="card-title">Invite Participants</h5>
+                            <p class="card-text">Invite participants to a scheduled meeting by entering their email addresses.</p>
+                            <a href="invite.php" class="btn btn-primary">Invite</a>
                         </div>
                     </div>
                 </div>
