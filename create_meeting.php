@@ -19,14 +19,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $meeting_description = $_POST['meeting_description'];
 
     $start = $meeting_date . 'T' . $start_time . ':00-07:00'; 
-    $end = $meeting_date . 'T' . $end_time . ':00-07:00'; 
-
-    $sql = "INSERT INTO meeting (organizer_id, title, description, start_time, end_time, created_at, updated_at)
-    VALUES (?, ?, ?, ?, ?, NOW(), NOW())";
-    $stmt = $conn->prepare($sql);
-    $stmt->bind_param("sssss", $user_id, $meeting_name, $meeting_description, $start, $end);
-    $stmt->execute();
-    $stmt->close();
+    $end = $meeting_date . 'T' . $end_time . ':00-07:00';
 
     $conference = new Google_Service_Calendar_ConferenceData();
     $create_request = new Google_Service_Calendar_CreateConferenceRequest();
@@ -59,6 +52,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         ));
 
         $meeting_link = $calendar_event->getHangoutLink();
+
+        $sql = "INSERT INTO meeting (organizer_id, title, description, start_time, end_time, created_at, updated_at, meeting_link)
+        VALUES (?, ?, ?, ?, ?, NOW(), NOW(), ?)";
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param("ssssss", $user_id, $meeting_name, $meeting_description, $start, $end, $meeting_link);
+        $stmt->execute();
+        $stmt->close();
+
         header("Location: all_meetings.php");
         exit();
     }

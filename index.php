@@ -3,6 +3,12 @@ include "header.php";
 session_start();
 ?>
 
+<style>
+.jumbotron {
+    background-color: #007BFF;
+}
+</style>
+
 <body>
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <div class="container">

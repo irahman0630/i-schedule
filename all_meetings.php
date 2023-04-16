@@ -78,6 +78,10 @@ if (isset($_GET['code'])) {
             </div>
         </div>
     </nav>
+    <br>
+    <div class="container mt-3">
+        <h1 class="text-center">All Meetings</h1>
+    </div>
     <div class="container mt-3">
         <div class="row">
             <?php foreach ($calendar_events->getItems() as $event) {
