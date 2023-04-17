@@ -42,12 +42,23 @@ if (isset($_GET['code'])) {
                 if (empty($end)) {
                     $end = $event->end->date;
                 }
+                // Get the meeting link from the SQL database
+                $meeting_id = $event->getId();
+                $stmt = $conn->prepare("SELECT meeting_link FROM meeting WHERE meeting_id = ?");
+                $stmt->bind_param("s", $meeting_id);
+                $stmt->execute();
+                $result = $stmt->get_result();
+                $row = $result->fetch_assoc();
+                $meeting_link = $row["meeting_link"];
+                $stmt->close();
+                
                 $event_data = array(
                     'title' => $event->getSummary(),
                     'start' => $start,
                     'end' => $end,
                     'description' => $event->getDescription(),
                     'url' => $event->getHangoutLink(),
+                    'meeting_link' => $meeting_link
                 );
                 array_push($events, $event_data);
             }
