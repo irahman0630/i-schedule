@@ -130,4 +130,4 @@ Instructions for team to set up database on local machines.
 Will discuss table set up later and how to interact with database through code (posting / getting information). 
 
 # Configurations / API
-Database hosted on Amazon RDS, locally hosting using Wamp (have to configure php.ini and php_apache.ini), using MySQL Workbench to manage, Full Calendar and Google API (must composer install).
+Database hosted on Amazon RDS, locally hosting using Wamp (have to configure php.ini and php_apache.ini), using MySQL Workbench to manage, Full Calendar and Google Calendar / Gmail / Meets API (must composer install).
