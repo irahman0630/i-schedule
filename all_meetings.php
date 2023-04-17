@@ -31,7 +31,7 @@ if (isset($_GET['code'])) {
         $calendar_events_html = 'No upcoming events found.';
     }
     else {
-        $calendar_events_html = '<ul>';
+        $events = array();
         foreach ($calendar_events->getItems() as $event) {
             if ($event->getCreator()->getEmail() == $email) {
                 $start = $event->start->dateTime;
@@ -42,18 +42,17 @@ if (isset($_GET['code'])) {
                 if (empty($end)) {
                     $end = $event->end->date;
                 }
-                $calendar_events_html .= '<li>';
-                $calendar_events_html .= '<h3>' . $event->getSummary() . '</h3>';
-                $calendar_events_html .= '<p>Start: ' . date('F j, Y, g:i a', strtotime($start)) . '</p>';
-                $calendar_events_html .= '<p>End: ' . date('F j, Y, g:i a', strtotime($end)) . '</p>';
-                $calendar_events_html .= '<p>Description: ' . $event->getDescription() . '</p>';
-                if ($event->getHangoutLink()) {
-                    $calendar_events_html .= '<p>Meeting Link: ' . $event->getHangoutLink() . '</p>';
-                }
-                $calendar_events_html .= '</li>';
+                $event_data = array(
+                    'title' => $event->getSummary(),
+                    'start' => $start,
+                    'end' => $end,
+                    'description' => $event->getDescription(),
+                    'url' => $event->getHangoutLink(),
+                );
+                array_push($events, $event_data);
             }
         }
-        $calendar_events_html .= '</ul>';
+        $events_json = json_encode($events);
     }
 } else {
     $authUrl = $client->createAuthUrl();
@@ -83,34 +82,18 @@ if (isset($_GET['code'])) {
         <h1 class="text-center">All Meetings</h1>
     </div>
     <div class="container mt-3">
-        <div class="row">
-            <?php foreach ($calendar_events->getItems() as $event) {
-                if ($event->getCreator()->getEmail() == $email) {
-                    $start = $event->start->dateTime;
-                    if (empty($start)) {
-                        $start = $event->start->date;
-                    }
-                    $end = $event->end->dateTime;
-                    if (empty($end)) {
-                        $end = $event->end->date;
-                    }
-                    ?>
-                    <div class="col-md-12">
-                        <div class="card mb-3">
-                            <div class="card-body">
-                                <h3 class="card-title"><?php echo $event->getSummary(); ?></h3>
-                                <p class="card-text"><strong>Start:</strong> <?php echo date('F j, Y, g:i a', strtotime($start)); ?></p>
-                                <p class="card-text"><strong>End:</strong> <?php echo date('F j, Y, g:i a', strtotime($end)); ?></p>
-                                <?php if($event->getHangoutLink()) { ?>
-                                    <p class="card-text"><strong>Meeting Link:</strong> <a href="<?php echo $event->getHangoutLink(); ?>" target="_blank"><?php echo $event->getHangoutLink(); ?></a></p>
-                                <?php } ?>
-                                <p class="card-text"><strong>Description:</strong> <?php echo $event->getDescription(); ?></p>
-                            </div>
-                        </div>
-                    </div>
-            <?php }
-            } ?>
+        <div class="container mt-3">
+            <div id='calendar'></div>
         </div>
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                var calendarEl = document.getElementById('calendar');
+                var calendar = new FullCalendar.Calendar(calendarEl, {
+                    initialView: 'dayGridMonth',
+                    events: <?php echo $events_json; ?>
+                });
+                calendar.render();
+            });
+        </script>
     </div>
-
 </body>
