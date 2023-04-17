@@ -43,21 +43,30 @@ session_start();
 
     <div class="container">
         <div class="row">
-            <div class="col-md-6">
+            <div class="col-md-12">
                 <div class="card">
                     <div class="card-body">
-                        <i class="fas fa-calendar-alt fa-3x"></i>
+                        <i class="fas fa-list fa-3x"></i>
                         <h5 class="card-title">Easy Scheduling</h5>
                         <p class="card-text">Create and manage your events and tasks easily with i-Schedule.</p>
                     </div>
                 </div>
             </div>
-            <div class="col-md-6">
+            <div class="col-md-12">
                 <div class="card">
                     <div class="card-body">
                         <i class="fas fa-users fa-3x"></i>
+                        <h5 class="card-title">Affiliation</h5>
+                        <p class="card-text">Join as a student, teacher or organization when creating your profile.</p>
+                        </div>
+                </div>
+            </div>
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-body">
+                        <i class="fas fa-envelope fa-3x"></i>
                         <h5 class="card-title">Collaboration</h5>
-                        <p class="card-text">Collaborate with your team and share your schedules with ease.</p>
+                        <p class="card-text">Invite your team to meetings created on i-Schedule.</p>
                         </div>
                 </div>
             </div>
