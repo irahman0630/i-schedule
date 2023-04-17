@@ -22,48 +22,84 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     // process invite form submission
     $meeting_id = $_POST['meeting_id'];
     $email = $_POST['email'];
-  
-      // retrieve meeting details
-      $sql = "SELECT title, meeting_link, description, start_time, end_time FROM meeting WHERE meeting_id = ?";
-      $stmt = $conn->prepare($sql);
-      $stmt->bind_param("s", $meeting_id);
-      $stmt->execute();
-      $result = $stmt->get_result();
-      $meeting = $result->fetch_assoc();
-      $stmt->close();
-  
-      // retrieve user details
-      $sql = "SELECT user_id FROM user WHERE email = ?";
-      $stmt = $conn->prepare($sql);
-      $stmt->bind_param("s", $email);
-      $stmt->execute();
-      $result = $stmt->get_result();
-      $recipient = $result->fetch_assoc();
-      $stmt->close();
-  
-      $recipient_id = $recipient['user_id'];
-      $sender_id = $user_id;
-      $created_at = date("Y-m-d H:i:s");
-      $updated_at = date("Y-m-d H:i:s");
 
-      $sql = "INSERT INTO invitation (meeting_id, sender_id, recipient_id, created_at, updated_at) VALUES (?, ?, ?, ?, ?)";
-      $stmt = $conn->prepare($sql);
-      $stmt->bind_param("sssss", $meeting_id, $sender_id, $recipient_id, $created_at, $updated_at);
-      $stmt->execute();
-      $stmt->close();
-      
-      $sql = "INSERT INTO notification (recipient_id, meeting_id, created_at, updated_at) VALUES (?, ?, ?, ?)";
-      $stmt = $conn->prepare($sql);
-      $stmt->bind_param("ssss", $recipient_id, $meeting_id, $created_at, $updated_at);
-      $stmt->execute();
-      $stmt->close();
+    // retrieve meeting details
+    $sql = "SELECT title, meeting_link, description, start_time, end_time FROM meeting WHERE meeting_id = ?";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("s", $meeting_id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $meeting = $result->fetch_assoc();
+    $stmt->close();
 
-      // Display success message
-        $success_message = "Invitation sent successfully!";
+    $client->authenticate($_GET['code']);
+    $access_token = $client->getAccessToken();
+    $service = new Google_Service_Gmail($client);
+
+    // build email body
+    $subject = 'Invitation to ' . $meeting['title'];
+    $start_time = date("c", strtotime($meeting['start_time']));
+    $end_time = date("c", strtotime($meeting['end_time']));
+    $location = "Online";
+    $description = $meeting['description'];
+    $event = new Google_Service_Calendar_Event(array(
+        'summary' => $meeting['title'],
+        'location' => $location,
+        'description' => $description,
+        'start' => array(
+            'dateTime' => $start_time,
+            'timeZone' => 'America/New_York',
+        ),
+        'end' => array(
+            'dateTime' => $end_time,
+            'timeZone' => 'America/New_York',
+        ),
+    ));
+    $calendar = new Google_Service_Calendar($client);
+    $calendar_event = $calendar->events->insert('primary', $event);
+
+    // send email
+    $gmail_message = new \Google_Service_Gmail_Message();
+    $body = "You are invited to a meeting titled " . $meeting['title'] . " scheduled for " . $meeting['start_time'] . " to " . $meeting['end_time'] . ". The meeting link is " . $meeting['meeting_link'] . ". Description: " . $meeting['description'] . " Click the link below to add the event to your Google Calendar: \r\n https://www.google.com/calendar/render?action=TEMPLATE&text=" . $meeting['title'] . "&dates=" . date("Ymd\THis", strtotime($start_time)) . "/" . date("Ymd\THis", strtotime($end_time)) . "&details=" . $description . "&location=" . $location . "&sprop=&sprop=name:";
+    $gmail_message->setRaw(base64_encode("To: $email\r\nSubject: $subject\r\n\r\n$body"));
+    $send_message = $service->users_messages->send("me", $gmail_message);
+
+
+    // retrieve user details
+    $sql = "SELECT user_id FROM user WHERE email = ?";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("s", $email);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $recipient = $result->fetch_assoc();
+    $stmt->close();
+
+    $recipient_id = $recipient['user_id'];
+    $sender_id = $user_id;
+    $created_at = date("Y-m-d H:i:s");
+    $updated_at = date("Y-m-d H:i:s");
+
+    $sql = "INSERT INTO invitation (meeting_id, sender_id, recipient_id, created_at, updated_at) VALUES (?, ?, ?, ?, ?)";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("sssss", $meeting_id, $sender_id, $recipient_id, $created_at, $updated_at);
+    $stmt->execute();
+    $stmt->close();
+
+    $sql = "INSERT INTO notification (recipient_id, meeting_id, created_at, updated_at) VALUES (?, ?, ?, ?)";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("ssss", $recipient_id, $meeting_id, $created_at, $updated_at);
+    $stmt->execute();
+    $stmt->close();
+
+    // Display success message
+    $success_message = "Invitation sent successfully!";
   }
 
 ?>
 
+<?php
+if (isset($_GET['code'])) {
+?>
 <body>
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <div class="container">
@@ -112,3 +148,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         </div>
     </div>
 </body>
+<?php }
+else {
+    $authUrl = $client->createAuthUrl();
+        header('Location: ' . filter_var($authUrl, FILTER_SANITIZE_URL));
+        exit;
+}
+?>
