@@ -23,6 +23,14 @@ include "header.php"
                                 <label for="confirm-password" class="form-label">Confirm password</label>
                                 <input type="password" class="form-control" id="confirm-password" required>
                             </div>
+                            <div class="mb-3">
+                                <label for="affiliation" class="form-label">Affiliation</label>
+                                <select class="form-control" id="affiliation">
+                                    <option value="student">Student</option>
+                                    <option value="teacher">Teacher</option>
+                                    <option value="business">Business</option>
+                                </select>
+                            </div>
                             <div id="error-message" style="display: none; color: red;"></div>
                             <br>
                             <button type="submit" id="submit-button" class="btn btn-primary d-block mx-auto"><i class="fas fa-user-plus"></i> Sign up</button>
@@ -41,6 +49,7 @@ include "header.php"
   var email = document.getElementById("email").value;
   var password1 = document.getElementById("password");
   var password2 = document.getElementById("confirm-password");
+  var affiliation = document.getElementById("affiliation");
   var submitButton = document.getElementById("submit-button");
 
   submitButton.addEventListener("click", function(event) {
@@ -66,14 +75,12 @@ include "header.php"
         }
       };
       xhr.send("email=" + encodeURIComponent(email) +
-        "&password=" + encodeURIComponent(password1.value));
+        "&password=" + encodeURIComponent(password1.value) +
+        "&affiliation=" + encodeURIComponent(affiliation.value));
     }
   });
-
 
   document.getElementById("back-btn").addEventListener("click", function() {
     window.location.href = "index.php";
   });
 </script>
-
-

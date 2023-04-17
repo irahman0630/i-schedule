@@ -57,7 +57,7 @@ session_start();
                     <div class="card-body">
                         <i class="fas fa-users fa-3x"></i>
                         <h5 class="card-title">Affiliation</h5>
-                        <p class="card-text">Join as a student, teacher or organization when creating your profile.</p>
+                        <p class="card-text">Join as a student, teacher or business when creating your profile.</p>
                         </div>
                 </div>
             </div>
