@@ -17,22 +17,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $start_time = $_POST['start_time'];
     $end_time = $_POST['end_time'];
     $meeting_description = $_POST['meeting_description'];
-    $meeting_type = $_POST['meeting_type'];
-    $location = $_POST['location'];
 
     $start = $meeting_date . 'T' . $start_time . ':00-07:00'; 
     $end = $meeting_date . 'T' . $end_time . ':00-07:00';
 
     $conference = new Google_Service_Calendar_ConferenceData();
-
-    if ($meeting_type === 'Virtual') {
-        $create_request = new Google_Service_Calendar_CreateConferenceRequest();
-        $conference_solution = new Google_Service_Calendar_ConferenceSolutionKey();
-        $conference_solution->setType("hangoutsMeet");
-        $create_request->setConferenceSolutionKey($conference_solution);
-        $create_request->setRequestId($meeting_name);
-        $conference->setCreateRequest($create_request);
-    }
+    $create_request = new Google_Service_Calendar_CreateConferenceRequest();
+    $conference_solution = new Google_Service_Calendar_ConferenceSolutionKey();
+    $conference_solution->setType("hangoutsMeet");
+    $create_request->setConferenceSolutionKey($conference_solution);
+    $create_request->setRequestId($meeting_name);
+    $conference->setCreateRequest($create_request);
     
     if (isset($_GET['code'])) {
         $client->authenticate($_GET['code']);
@@ -41,7 +36,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $calendar_event = new Google_Service_Calendar_Event(array(
             'summary' => $meeting_name,
             'description' => $meeting_description,
-            'location' => $location,
             'start' => array(
               'dateTime' => $start,
               'timeZone' => 'America/New_York',
@@ -54,24 +48,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             'conferenceDataVersion' => 1
         ));
 
-        if ($meeting_type === 'In person') {
-            $calendar_event->setLocation($location);
-        }
-
         $calendar_event = $calendar_service->events->insert($calendar_id, $calendar_event, array(
             'conferenceDataVersion' => 1
         ));
 
-        if ($meeting_type === 'Virtual') {
-            $meeting_link = $calendar_event->getHangoutLink();
-        } else {
-            $meeting_link = null;
-        }
-
-        $sql = "INSERT INTO meeting (organizer_id, title, description, start_time, end_time, created_at, updated_at, meeting_link, meeting_type, location)
-        VALUES (?, ?, ?, ?, ?, NOW(), NOW(), ?, ?, ?)";
+        $meeting_link = $calendar_event->getHangoutLink();
+        
+        $sql = "INSERT INTO meeting (organizer_id, title, description, start_time, end_time, created_at, updated_at, meeting_link)
+        VALUES (?, ?, ?, ?, ?, NOW(), NOW(), ?)";
         $stmt = $conn->prepare($sql);
-        $stmt->bind_param("sssssss", $user_id, $meeting_name, $meeting_description, $start, $end, $meeting_link, $meeting_type, $location);
+        $stmt->bind_param("ssssss", $user_id, $meeting_name, $meeting_description, $start, $end, $meeting_link);
         $stmt->execute();
         $stmt->close();
 
@@ -83,6 +69,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         header('Location: ' . filter_var($authUrl, FILTER_SANITIZE_URL));
         exit;
     }
+    
 }
 ?>
 
@@ -128,17 +115,6 @@ if (isset($_GET['code'])) {
                             </div>
                         </div>
                             <div class="mb-3">
-                                <label for="meeting-type" class="form-label">Type</label>
-                                <select class="form-select" id="meeting-type" name="meeting_type">
-                                    <option value="Virtual">Virtual</option>
-                                    <option value="In person">In person</option>
-                                </select>
-                            </div>
-                            <div class="mb-3" id="location-field" style="display:none;">
-                                <label for="location" class="form-label">Location</label>
-                                <input type="text" class="form-control" id="location" name="location">
-                            </div>
-                            <div class="mb-3">
                                 <label for="meeting-description" class="form-label">Meeting Description</label>
                                 <textarea class="form-control" id="meeting-descriptiont" rows="3" name="meeting_description"></textarea>
                             </div>
@@ -151,16 +127,6 @@ if (isset($_GET['code'])) {
         </div>
     </div>
 </body>
-<script>
-        document.getElementById('meeting-type').addEventListener('change', function() {
-            var locationField = document.getElementById('location-field');
-            if (this.value === 'In person') {
-                locationField.style.display = 'block';
-            } else {
-                locationField.style.display = 'none';
-            }
-        });
-</script>
 <?php }
 else {
     $authUrl = $client->createAuthUrl();
